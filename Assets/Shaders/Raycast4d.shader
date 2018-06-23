@@ -301,14 +301,14 @@ float3 rayCastScene(in Ray originalRay, in Scene scene){
     float baseFogDist = 0.0;
   	float subRayMultiplier = 1.0;
     
-	const int maxSurfaceHits = 4;
-
-    for (int i = 0; i < maxSurfaceHits; i++){    
+	//const int maxSurfaceHits = 4;
+    //for (int i = 0; i < maxSurfaceHits; i++){    
+    for (int i = 0; i < 4; i++){    
     	RayHit curHit = rayCastBase(curRay, scene);
 
     	float rayDot = clamp(dot(-curRay.dir, curHit.n), 0.0, 1.0);
    		float fresnSimple = 1.0 - rayDot;
-    	fresnSimple = lerp(0.1, 1.0, fresnSimple * fresnSimple);
+    	fresnSimple = lerp(0.25, 1.0, fresnSimple * fresnSimple);
     
     	float3 baseColor = curHit.color;
     	float4 worldPos = curHit.dist * curRay.dir + curRay.start;
@@ -342,8 +342,9 @@ float4 planeProjectNormalize(in float4 v, in float4 n){
 
 float4 getCurViewerPosition(){
     const float timePeriod = 30.0;
-        
-    const int numPositions = 7;
+    
+	#define numPositions 8
+    //const int numPositions = 7;
     float4 positions[numPositions] = {
         float4(-3.0, 1.0, -3.0, 0.0),
         float4(3.0, 1.0, -3.0, 0.0),
@@ -351,6 +352,7 @@ float4 getCurViewerPosition(){
         float4(3.0, 1.0, 0.0, -3.0),
         float4(0.0, 1.0, 0.0, -3.0),
         float4(0.0, 0.0, 0.0, -3.0),
+        float4(1.0, 1.0, 1.0, 6.0),
         float4(-3.0, 1.0, -3.0, 0.0)
     };
     
@@ -363,6 +365,7 @@ float4 getCurViewerPosition(){
     curLerp = clamp(curLerp * lerpScale, 0.0, 1.0);
     int nextPos = (curPos + 1) % numPositions;
     return lerp(positions[curPos], positions[nextPos], curLerp);    
+    #undef numPositions
 }
 
 Viewer makeViewer(){
